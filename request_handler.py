@@ -135,4 +135,3 @@ if __name__ == "__main__":
         print("Next request served:", next_req)
     else:
         print("No requests available")
-
