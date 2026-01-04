@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+
+<style>
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #f5f0fb, #ede7fb);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    background: white;
+    padding: 40px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    width: 380px;
+}
+
+h2 {
+    text-align: center;
+    color: #5b3fa6;
+    font-size: 32px;
+    margin-bottom: 25px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+    margin-top: 15px;
+    color: #4a357d;
+}
+
+input {
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #c8bdf0;
+    font-size: 16px;
+}
+
+button {
+    margin-top: 30px;
+    padding: 15px;
+    background: #6b4cb3;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #5a3ea0;
+}
+
+.link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 15px;
+}
+
+.link a {
+    color: #5b3fa6;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.link a:hover {
+    text-decoration: underline;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>Login</h2>
+
+  <form id="loginForm">
+    <label>Email</label>
+    <input type="email" id="email" required>
+
+    <label>Password</label>
+    <input type="password" id="password" required>
+
+    <button type="submit">Login</button>
+  </form>
+
+  <div class="link">
+    New user? <a href="register.html">Register</a>
+  </div>
+</div>
+
+<!-- 🔥 FIREBASE LOGIN SCRIPT (FIXED) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDyZV7_NJURsYtOK311V4b13NG3uHv3tog",
+  authDomain: "elderlyease-7be75.firebaseapp.com",
+  projectId: "elderlyease-7be75",
+  storageBucket: "elderlyease-7be75.appspot.com",
+  messagingSenderId: "933473196",
+  appId: "1:933473196:web:902488f3ce1317c333a809"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+
+    const role = localStorage.getItem("userRole");
+
+    if (role === "elder") {
+      window.location.href = "request.html";
+    } else if (role === "volunteer") {
+      window.location.href = "volunteer.html";
+    } else {
+      alert("Role not found. Please register again.");
+    }
+
+  } catch (error) {
+    alert("Invalid email or password");
+  }
+});
+</script>
+
+</body>
+</html>

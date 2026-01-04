@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Volunteer Verification</title>
+
+<style>
+/* ===== BASE ===== */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f0fb;
+}
+
+/* ===== APP HEADING ===== */
+.app-header {
+    background: #f5f0fb;
+    color: #5b3fa6;
+    font-size: 36px;
+    font-weight: bold;
+    padding: 20px 50px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+/* ===== PAGE CONTENT ===== */
+.container {
+    max-width: 900px;
+    margin: 80px auto;
+    padding: 40px;
+}
+
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #5b3fa6;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 40px;
+    font-size: 16px;
+}
+
+.upload-box {
+    border: 2px dashed #cbbdf2;
+    border-radius: 14px;
+    padding: 40px;
+    text-align: center;
+    background: #faf7ff;
+}
+
+.upload-box input {
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.info {
+    margin-top: 30px;
+    color: #555;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.actions {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+.verify-btn {
+    background: #6b4cb3;
+    color: white;
+    border: none;
+    padding: 14px 36px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.verify-btn:hover {
+    background: #5a3ea0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADING -->
+<div class="app-header">Connect Circle</div>
+
+<div class="container">
+    <div class="card">
+        <h1>Volunteer Verification</h1>
+        <div class="subtitle">
+            Please upload your Aadhaar ID to continue
+        </div>
+
+        <div class="upload-box">
+            <strong>Upload Aadhaar ID</strong><br>
+            <input type="file" accept=".jpg,.jpeg,.png,.pdf">
+        </div>
+
+        <div class="info">
+            • Your Aadhaar is used only for identity verification<br>
+            • This helps elders trust verified helpers<br>
+            • You can update your profile after verification
+        </div>
+
+        <div class="actions">
+            <!-- TEMP DEMO LINK -->
+            <a href="volunteer_dashboard.html">
+                <button class="verify-btn">Verify & Continue</button>
+            </a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
