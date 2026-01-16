@@ -1,236 +1,64 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
+# ================================
+# ConnectCircle - Volunteer Matcher
+# ================================
 
-#define MAX 50
-#define INF 99999
+from collections import deque
 
-// ---------------- GRAPH STRUCTURES -----------------
+from datastore import volunteers
 
-typedef struct Node {
-    int v;
-    int w;                 // weight (distance)
-    struct Node* next;
-} Node;
-
-Node* graph[MAX]; // adjacency list
-int n = 0;        // total nodes
-
-// ---------------- VOLUNTEER DATA --------------------
-
-int isVolunteer[MAX];
-int available[MAX];
-int trust[MAX];
-
-// ---------------- QUEUE FOR BFS ---------------------
-
-int queue[MAX];
-int front = -1, rear = -1;
-
-void enqueue(int x){
-    if(rear == MAX-1) return;
-    if(front == -1) front = 0;
-    queue[++rear] = x;
+# ----------------
+# GRAPH (Adjacency List)
+# ----------------
+community_graph = {
+    "BTM": ["Jayanagar"],
+    "Jayanagar": ["BTM", "JP Nagar"],
+    "JP Nagar": ["Jayanagar", "Whitefield"],
+    "Whitefield": ["JP Nagar"]
 }
 
-int dequeue(){
-    if(front == -1) return -1;
-    int x = queue[front++];
-    if(front > rear){ front = rear = -1; }
-    return x;
-}
+# ----------------
+# BFS FOR NEAREST LOCATION
+# ----------------
+def bfs_distance(start):
+    distance = {start: 0}
+    queue = deque([start])
 
-int isEmpty(){
-    return front == -1;
-}
+    while queue:
+        current = queue.popleft()
+        for neighbor in community_graph.get(current, []):
+            if neighbor not in distance:
+                distance[neighbor] = distance[current] + 1
+                queue.append(neighbor)
 
-// ---------------- ADD EDGE ---------------------
+    return distance
 
-void addEdge(int u, int v, int w){
-    Node* temp = (Node*)malloc(sizeof(Node));
-    temp->v = v;
-    temp->w = w;
-    temp->next = graph[u];
-    graph[u] = temp;
 
-    temp = (Node*)malloc(sizeof(Node));
-    temp->v = u;
-    temp->w = w;
-    temp->next = graph[v];
-    graph[v] = temp;
-}
+# ----------------
+# MATCH BEST VOLUNTEER
+# ----------------
+def find_best_volunteer(request):
+    distances = bfs_distance(request.location)
 
-// ---------------- PRINT GRAPH -------------------------
+    best_volunteer = None
+    best_score = -1
 
-void printGraph(){
-    printf("\nCommunity Graph (Adjacency List):\n");
-    for(int i=0;i<n;i++){
-        printf("%d -> ", i);
-        Node* temp = graph[i];
-        while(temp){
-            printf("%d(%d) ", temp->v, temp->w);
-            temp = temp->next;
-        }
-        printf("\n");
-    }
-}
+    for volunteer in volunteers.values():
+        if not volunteer.available:
+            continue
 
-// ---------------- BFS (UNWEIGHTED) ---------------------
+        if volunteer.location not in distances:
+            continue
 
-void bfs(int src, int dist[]){
-    for(int i=0;i<n;i++) dist[i] = INF;
+        # Trust-based + distance-based scoring
+        score = (volunteer.trust * 10) - distances[volunteer.location]
 
-    dist[src] = 0;
-    enqueue(src);
+        if score > best_score:
+            best_score = score
+            best_volunteer = volunteer
 
-    while(!isEmpty()){
-        int u = dequeue();
-        Node* temp = graph[u];
+    if best_volunteer:
+        best_volunteer.available = False
+        request.assigned_volunteer = best_volunteer.user_id
+        request.status = "ASSIGNED"
 
-        while(temp){
-            int v = temp->v;
-            if(dist[v] == INF){
-                dist[v] = dist[u] + 1;
-                enqueue(v);
-            }
-            temp = temp->next;
-        }
-    }
-}
-
-// ---------------- DIJKSTRA (WEIGHTED) ---------------------
-
-void dijkstra(int src, int dist[]){
-    int vis[MAX]={0};
-
-    for(int i=0;i<n;i++) dist[i]=INF;
-    dist[src]=0;
-
-    for(int count=0; count<n-1; count++){
-        int u=-1;
-
-        for(int i=0;i<n;i++)
-            if(!vis[i] && (u==-1 || dist[i]<dist[u]))
-                u=i;
-
-        vis[u]=1;
-
-        Node* temp=graph[u];
-        while(temp){
-            int v=temp->v;
-            int w=temp->w;
-            if(dist[u]+w < dist[v]){
-                dist[v]=dist[u]+w;
-            }
-            temp=temp->next;
-        }
-    }
-}
-
-// ---------------- TRUST UPDATE ---------------------
-
-void updateTrust(int vol, int delta){
-    trust[vol] += delta;
-    if(trust[vol] < 0) trust[vol] = 0;
-    if(trust[vol] > 10) trust[vol] = 10;
-}
-
-// ---------------- AVAILABILITY UPDATE ---------------------
-
-void setAvailability(int vol, int status){
-    available[vol] = status;
-}
-
-// ---------------- MATCHING FUNCTION ---------------------
-
-int matchVolunteer(int requester, int weighted){
-
-    int dist[MAX];
-
-    if(weighted)
-        dijkstra(requester, dist);
-    else
-        bfs(requester, dist);
-
-    int bestVol = -1;
-    int bestScore = -INF;
-
-    for(int i=0;i<n;i++){
-        if(isVolunteer[i] && available[i] && dist[i]!=INF){
-
-            int score = trust[i]*10 - dist[i];
-
-            if(score > bestScore){
-                bestScore = score;
-                bestVol = i;
-            }
-        }
-    }
-
-    return bestVol;
-}
-
-// ---------------- MAIN DEMO ---------------------
-
-int main(){
-
-    n = 8; // nodes 0..7
-
-    // build graph (weights = distance between areas)
-    addEdge(0,1,1);
-    addEdge(1,2,1);
-    addEdge(2,3,1);
-    addEdge(3,4,2);
-    addEdge(1,5,1);
-    addEdge(5,6,1);
-    addEdge(6,7,1);
-
-    printGraph();
-
-    // mark volunteers
-    isVolunteer[3]=1;
-    isVolunteer[5]=1;
-    isVolunteer[7]=1;
-
-    // availability
-    available[3]=1;
-    available[5]=1;
-    available[7]=1;
-
-    // trust (0–10)
-    trust[3]=5;
-    trust[5]=8;
-    trust[7]=6;
-
-    int requester = 0;
-
-    printf("\nRequester: %d\n", requester);
-
-    int volunteer = matchVolunteer(requester, 0); // 0 = BFS mode
-
-    if(volunteer==-1){
-        printf("No volunteer available.\n");
-        return 0;
-    }
-
-    printf("\nBest volunteer assigned: %d\n", volunteer);
-
-    printf("\nVolunteer %d rejected.\n", volunteer);
-    setAvailability(volunteer, 0);
-    updateTrust(volunteer, -1);
-
-    int second = matchVolunteer(requester, 0);
-
-    if(second==-1)
-        printf("\nNo fallback volunteer available.\n");
-    else
-        printf("\nFallback volunteer assigned: %d\n", second);
-
-    printf("\nTrust Scores after update:\n");
-    for(int i=0;i<n;i++){
-        if(isVolunteer[i])
-            printf("Volunteer %d -> Trust %d\n", i, trust[i]);
-    }
-
-    return 0;
-}
+    return best_volunteer
