@@ -1,23 +1,29 @@
 import heapq
-from collections import deque
 
-normal_queue = deque()
-emergency_heap = []
-request_map = {}
+URGENT_KEYWORDS = ["urgent", "pain", "fell", "help", "fast"]
 
-def is_emergency(category, severity):
-    return category in ["Medical", "Safety"] or severity >= 4
+def classify_request(category, description, nearby_volunteers):
+    emergency = 0
 
-def add_request(req):
-    request_map[req.id] = req
-    if is_emergency(req.category, req.severity):
-        heapq.heappush(emergency_heap, (-req.severity, req))
-    else:
-        normal_queue.append(req)
+    if category.lower() in ["medical", "safety", "mobility"]:
+        emergency += 1
 
-def get_next_request():
-    if emergency_heap:
-        return heapq.heappop(emergency_heap)[1]
-    if normal_queue:
-        return normal_queue.popleft()
-    return None
+    count = sum(word in description.lower() for word in URGENT_KEYWORDS)
+    if count >= 2:
+        emergency += 1
+
+    if not nearby_volunteers:
+        emergency += 1
+
+    return 0 if emergency >= 2 else 1   # 0 = Emergency, 1 = Normal
+
+
+class RequestQueue:
+    def __init__(self):
+        self.heap = []
+
+    def add(self, priority, request_id):
+        heapq.heappush(self.heap, (priority, request_id))
+
+    def pop(self):
+        return heapq.heappop(self.heap) if self.heap else None

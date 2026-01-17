@@ -1,7 +1,9 @@
-<h2>Available Requests</h2>
+<link rel="stylesheet" href="/static/style.css">
+<div class="container">
+<h3>Available Requests</h3>
 {% for r in requests %}
-<div>
-<b>{{r[1]}}</b> - {{r[2]}}
-<a href="/accept/{{r[0]}}/{{user_id}}">Accept</a>
-</div>
+  <div>
+    <b>{{ r.category }}</b> - {{ "Emergency" if r.priority == 0 else "Normal" }}
+  </div>
 {% endfor %}
+</div>

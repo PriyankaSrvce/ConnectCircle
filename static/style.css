@@ -1,34 +1,23 @@
 body {
-  font-family: 'Segoe UI';
-  background: #f5f7fb;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f7f7f7;
+    margin: 0;
 }
 
-.center {
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
+.container {
+    max-width: 420px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    min-height: 100vh;
 }
 
-.card {
-  background:white;
-  padding:40px;
-  border-radius:16px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.1);
-}
-
-.btn {
-  display:block;
-  margin:15px 0;
-  padding:15px;
-  background:#0c831f;
-  color:white;
-  text-align:center;
-  border-radius:10px;
-  text-decoration:none;
-  font-weight:bold;
-}
-
-.secondary {
-  background:#444;
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    background: #0C831F;
+    color: white;
+    font-size: 16px;
+    border-radius: 8px;
 }
