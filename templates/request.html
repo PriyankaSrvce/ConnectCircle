@@ -1,10 +1,16 @@
-<link rel="stylesheet" href="/static/style.css">
-<div class="container">
-<h2>Request Help</h2>
-<form method="post" action="/status">
-<input name="name" value="{{user.name}}" readonly>
-<input name="location" value="{{user.location}}" readonly>
-<textarea name="description" placeholder="Describe your problem"></textarea>
-<button>Find Helper</button>
+<form method="post">
+    <h2>Create Help Request</h2>
+    Category:
+    <select name="category">
+        <option>Medical</option>
+        <option>Grocery</option>
+    </select><br><br>
+
+    Description:<br>
+    <textarea name="desc"></textarea><br><br>
+
+    Location:
+    <input name="location"><br><br>
+
+    <button type="submit">Submit</button>
 </form>
-</div>

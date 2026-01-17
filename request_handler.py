@@ -1,10 +1,5 @@
-from datastore import normal_queue
+from datastore import request_queue, requests
 
-def add_request(request):
-    normal_queue.append(request)
-
-def get_next_request():
-    if normal_queue:
-        return normal_queue.popleft()
-    return None
-
+def add_request(req):
+    request_queue.append(req)
+    requests[req.req_id] = req

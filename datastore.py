@@ -1,16 +1,13 @@
 from collections import deque
+from models import Volunteer
 
-# Requests
-normal_queue = deque()
-history = []
+requests = {}
+request_queue = deque()
 
-# Volunteers
-volunteers = []
-
-# Location Graph (FIXED)
-graph = {
-    "btm": ["jayanagar", "iblur"],
-    "jayanagar": ["btm", "whitefield"],
-    "iblur": ["btm"],
-    "whitefield": ["jayanagar"]
+volunteers = {
+    "Ravi": Volunteer("Ravi"),
+    "Anitha": Volunteer("Anitha"),
+    "Nikitha": Volunteer("Nikitha")
 }
+
+request_counter = 1

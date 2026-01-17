@@ -1,7 +1,7 @@
-from datastore import history
+from datastore import volunteers
 
-def complete_request(request, success=True):
-    request.status = "COMPLETED"
-    if success and request.assigned_volunteer:
-        request.assigned_volunteer.trust += 1
-    history.append(request)
+def complete_request(req, rating):
+    vol = volunteers[req.volunteer]
+    vol.trust = min(10, vol.trust + rating)
+    vol.available = True
+    req.status = "COMPLETED"
