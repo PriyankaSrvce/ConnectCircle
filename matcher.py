@@ -1,64 +1,38 @@
-# ================================
-# ConnectCircle - Volunteer Matcher
-# ================================
-
 from collections import deque
 
-from datastore import volunteers
-
-# ----------------
-# GRAPH (Adjacency List)
-# ----------------
-community_graph = {
+# Graph (Adjacency List)
+graph = {
     "BTM": ["Jayanagar"],
-    "Jayanagar": ["BTM", "JP Nagar"],
-    "JP Nagar": ["Jayanagar", "Whitefield"],
-    "Whitefield": ["JP Nagar"]
+    "Jayanagar": ["BTM", "Whitefield"],
+    "Whitefield": ["Jayanagar"]
 }
 
-# ----------------
-# BFS FOR NEAREST LOCATION
-# ----------------
-def bfs_distance(start):
-    distance = {start: 0}
-    queue = deque([start])
+def bfs(start):
+    dist = {node: float("inf") for node in graph}
+    dist[start] = 0
+    q = deque([start])
 
-    while queue:
-        current = queue.popleft()
-        for neighbor in community_graph.get(current, []):
-            if neighbor not in distance:
-                distance[neighbor] = distance[current] + 1
-                queue.append(neighbor)
-
-    return distance
+    while q:
+        cur = q.popleft()
+        for nxt in graph[cur]:
+            if dist[nxt] == float("inf"):
+                dist[nxt] = dist[cur] + 1
+                q.append(nxt)
+    return dist
 
 
-# ----------------
-# MATCH BEST VOLUNTEER
-# ----------------
-def find_best_volunteer(request):
-    distances = bfs_distance(request.location)
-
-    best_volunteer = None
+def match_volunteer(request, volunteers):
+    distances = bfs(request.location)
+    best = None
     best_score = -1
 
-    for volunteer in volunteers.values():
-        if not volunteer.available:
+    for v in volunteers.values():
+        if not v.available:
             continue
-
-        if volunteer.location not in distances:
-            continue
-
-        # Trust-based + distance-based scoring
-        score = (volunteer.trust * 10) - distances[volunteer.location]
-
+        d = distances.get(v.location, 10)
+        score = v.trust * 10 - d
         if score > best_score:
             best_score = score
-            best_volunteer = volunteer
+            best = v
 
-    if best_volunteer:
-        best_volunteer.available = False
-        request.assigned_volunteer = best_volunteer.user_id
-        request.status = "ASSIGNED"
-
-    return best_volunteer
+    return best
