@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html>
-<body>
+<head>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="center">
 <h2>ConnectCircle</h2>
 <form method="post">
-    <label>Select Role:</label><br><br>
-    <input type="radio" name="role" value="seeker" required> Seeker
-    <input type="radio" name="role" value="volunteer"> Volunteer<br><br>
-    <button type="submit">Continue</button>
+<input name="name" placeholder="Your name" required>
+<select name="role">
+<option value="seeker">I Need Help</option>
+<option value="volunteer">I Want to Help</option>
+</select>
+<button>Continue</button>
 </form>
 </body>
 </html>

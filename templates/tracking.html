@@ -1,0 +1,5 @@
+<h2>Request Status</h2>
+<p>{{status}}</p>
+{% if status == "ON THE WAY" %}
+<a href="/complete/{{request_id}}">Mark Completed</a>
+{% endif %}
