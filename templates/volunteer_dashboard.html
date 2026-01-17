@@ -1,9 +1,0 @@
-<link rel="stylesheet" href="/static/style.css">
-<div class="container">
-<h3>Available Requests</h3>
-{% for r in requests %}
-  <div>
-    <b>{{ r.category }}</b> - {{ "Emergency" if r.priority == 0 else "Normal" }}
-  </div>
-{% endfor %}
-</div>

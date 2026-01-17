@@ -1,2 +1,8 @@
-<h2>Request Help</h2>
-<a href="/request" class="btn">Create New Request</a>
+<link rel="stylesheet" href="/static/styles.css">
+<div class="header">Welcome {{name}}</div>
+
+<div class="container">
+  <a href="/create_request/{{name}}">
+    <button class="btn">Request Help</button>
+  </a>
+</div>
