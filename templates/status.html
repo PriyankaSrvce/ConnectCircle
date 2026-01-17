@@ -1,7 +1,11 @@
+<link rel="stylesheet" href="/static/style.css">
+<div class="container">
 <h2>Status</h2>
-<p>Request: {{ req.category }}</p>
-{% if vol %}
-<p>Assigned Volunteer: {{ vol.name }}</p>
+{% if volunteer %}
+<p><b>Assigned Volunteer:</b> {{volunteer.name}}</p>
+<p><b>Location:</b> {{volunteer.location}}</p>
+<p><b>Trust:</b> {{volunteer.trust}}</p>
 {% else %}
-<p>No volunteer found</p>
+<p>No volunteer available</p>
 {% endif %}
+</div>

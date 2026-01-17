@@ -1,8 +1,10 @@
-<form method="post">
-  <h2>Create Request</h2>
-  <input name="category" placeholder="Category">
-  <input name="description" placeholder="Description">
-  <input name="location" placeholder="Location">
-  <input name="severity" type="number" min="1" max="5">
-  <button>Submit</button>
+<link rel="stylesheet" href="/static/style.css">
+<div class="container">
+<h2>Request Help</h2>
+<form method="post" action="/status">
+<input name="name" value="{{user.name}}" readonly>
+<input name="location" value="{{user.location}}" readonly>
+<textarea name="description" placeholder="Describe your problem"></textarea>
+<button>Find Helper</button>
 </form>
+</div>

@@ -1,9 +1,18 @@
-<form method="post" action="/login">
-  <h2>ConnectCircle Login</h2>
-  <input name="name" placeholder="Name" required>
-  <select name="role">
-    <option value="seeker">Need Help</option>
-    <option value="volunteer">Volunteer</option>
-  </select>
-  <button type="submit">Continue</button>
+<link rel="stylesheet" href="/static/style.css">
+<div class="container">
+<h2>ConnectCircle</h2>
+<form method="post">
+<input name="name" placeholder="Your Name" required>
+<select name="role">
+  <option value="seeker">Need Help</option>
+  <option value="volunteer">Volunteer</option>
+</select>
+<select name="location">
+  <option value="btm">BTM</option>
+  <option value="iblur">Iblur</option>
+  <option value="jayanagar">Jayanagar</option>
+  <option value="whitefield">Whitefield</option>
+</select>
+<button>Continue</button>
 </form>
+</div>

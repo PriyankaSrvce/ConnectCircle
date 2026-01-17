@@ -1,24 +1,22 @@
 class User:
-    def __init__(self, user_id, name, role):
-        self.user_id = user_id
+    def __init__(self, name, role, location):
         self.name = name
-        self.role = role  # seeker / volunteer
+        self.role = role  # "seeker" or "volunteer"
+        self.location = location
 
 
 class Volunteer(User):
-    def __init__(self, user_id, name, location):
-        super().__init__(user_id, name, "volunteer")
-        self.location = location
-        self.trust = 5
+    def __init__(self, name, location, trust=5):
+        super().__init__(name, "volunteer", location)
+        self.trust = trust
         self.available = True
 
 
 class Request:
-    def __init__(self, req_id, category, description, location, severity):
-        self.req_id = req_id
+    def __init__(self, requester, category, description, location):
+        self.requester = requester
         self.category = category
         self.description = description
         self.location = location
-        self.severity = severity
         self.status = "PENDING"
         self.assigned_volunteer = None

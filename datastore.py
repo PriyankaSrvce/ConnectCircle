@@ -1,13 +1,16 @@
 from collections import deque
 
-# HashMaps
-users = {}
-volunteers = {}
-requests = {}
-
-# Queues
+# Requests
 normal_queue = deque()
-emergency_pq = []
-
-# Linked list for history
 history = []
+
+# Volunteers
+volunteers = []
+
+# Location Graph (FIXED)
+graph = {
+    "btm": ["jayanagar", "iblur"],
+    "jayanagar": ["btm", "whitefield"],
+    "iblur": ["btm"],
+    "whitefield": ["jayanagar"]
+}

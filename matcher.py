@@ -1,38 +1,38 @@
 from collections import deque
-
-# Graph (Adjacency List)
-graph = {
-    "BTM": ["Jayanagar"],
-    "Jayanagar": ["BTM", "Whitefield"],
-    "Whitefield": ["Jayanagar"]
-}
+from datastore import graph
 
 def bfs(start):
-    dist = {node: float("inf") for node in graph}
-    dist[start] = 0
-    q = deque([start])
+    visited = set()
+    queue = deque([(start, 0)])
+    distances = {}
 
-    while q:
-        cur = q.popleft()
-        for nxt in graph[cur]:
-            if dist[nxt] == float("inf"):
-                dist[nxt] = dist[cur] + 1
-                q.append(nxt)
-    return dist
+    while queue:
+        node, dist = queue.popleft()
+        if node in visited:
+            continue
+        visited.add(node)
+        distances[node] = dist
+
+        for nxt in graph.get(node, []):   # SAFE ACCESS
+            if nxt not in visited:
+                queue.append((nxt, dist + 1))
+
+    return distances
 
 
 def match_volunteer(request, volunteers):
     distances = bfs(request.location)
+
     best = None
     best_score = -1
 
-    for v in volunteers.values():
+    for v in volunteers:
         if not v.available:
             continue
-        d = distances.get(v.location, 10)
-        score = v.trust * 10 - d
+        dist = distances.get(v.location, 999)
+        score = v.trust * 10 - dist
         if score > best_score:
-            best_score = score
             best = v
+            best_score = score
 
     return best
