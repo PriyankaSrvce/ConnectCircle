@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="bg-white p-8 rounded-xl shadow max-w-xl mx-auto">
+    <h2 class="text-xl font-bold mb-4">Request Status</h2>
+
+    {% if req %}
+        <p><strong>Category:</strong> {{ req["category"] }}</p>
+        <p><strong>Status:</strong>
+            <span class="text-yellow-600">{{ req["status"] }}</span>
+        </p>
+
+        {% if req["image"] %}
+            <img src="/static/uploads/{{ req['image'] }}"
+                 class="mt-4 rounded-lg">
+        {% endif %}
+    {% else %}
+        <p>No request found.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="bg-white p-8 rounded-xl shadow max-w-xl mx-auto">
+    <h2 class="text-xl font-bold mb-4">Request Help</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium">Category</label>
+            <select name="category" class="w-full p-3 border rounded-lg">
+                <option>Medical</option>
+                <option>Daily Needs</option>
+                <option>Emergency</option>
+                <option>Other</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium">Describe your problem</label>
+            <textarea name="description" required
+                class="w-full p-3 border rounded-lg"
+                rows="4"></textarea>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium">
+                Upload image (prescription / issue)
+            </label>
+            <input type="file" name="image"
+                   class="w-full p-2 border rounded-lg">
+        </div>
+
+        <button class="w-full bg-green-500 text-white py-3 rounded-lg font-semibold">
+            Submit Request
+        </button>
+    </form>
+</div>
+
+{% endblock %}
