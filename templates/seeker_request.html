@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Create Request</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 p-6">
@@ -18,11 +17,13 @@
     <option>Other</option>
   </select>
 
-  <textarea name="description" placeholder="Describe your issue"
-            class="w-full mb-3 p-2 border rounded" required></textarea>
+  <textarea name="description" required
+            class="w-full mb-3 p-2 border rounded"
+            placeholder="Describe your issue"></textarea>
 
-  <input name="location" placeholder="Location"
-         class="w-full mb-3 p-2 border rounded" required>
+  <input name="location" required
+         class="w-full mb-3 p-2 border rounded"
+         placeholder="Location">
 
   <input type="file" name="image" class="mb-3">
 

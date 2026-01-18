@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3, os, heapq, time, math
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "connectcircle-secret"
@@ -24,6 +25,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE,
+        password TEXT,
         role TEXT,
         latitude REAL,
         longitude REAL
@@ -43,6 +45,7 @@ def init_db():
         assigned_volunteer INTEGER
     )
     """)
+
     conn.commit()
     conn.close()
 
@@ -53,8 +56,7 @@ priority_queue = []
 PRIORITY_MAP = {"Emergency": 1, "Normal": 2}
 
 URGENT_KEYWORDS = [
-    "urgent", "pain", "bleeding", "fell",
-    "help fast", "emergency"
+    "urgent", "pain", "bleeding", "fell", "help fast", "emergency"
 ]
 
 # ================= GRAPH / DISTANCE =================
@@ -62,9 +64,12 @@ def distance(lat1, lon1, lat2, lon2):
     return math.sqrt((lat1 - lat2)**2 + (lon1 - lon2)**2)
 
 def nearby_volunteer_exists(lat, lon):
+    if lat is None or lon is None:
+        return False
+
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM users WHERE role='Volunteer'")
+    cur.execute("SELECT latitude, longitude FROM users WHERE role='Volunteer'")
     volunteers = cur.fetchall()
 
     for v in volunteers:
@@ -87,34 +92,52 @@ def classify_priority(category, description, lat, lon):
 
     return "Normal"
 
-# ================= LOGIN =================
+# ================= LOGIN / SIGNUP =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form["username"]
+        password = request.form["password"]
         role = request.form["role"]
-        lat = float(request.form["lat"])
-        lon = float(request.form["lon"])
+
+        lat_raw = request.form.get("lat", "")
+        lon_raw = request.form.get("lon", "")
+
+        try:
+            lat = float(lat_raw)
+            lon = float(lon_raw)
+        except ValueError:
+            lat = None
+            lon = None
 
         conn = get_db()
         cur = conn.cursor()
-
         cur.execute("SELECT * FROM users WHERE username=?", (username,))
         user = cur.fetchone()
 
-        if not user:
+        # SIGN UP
+        if "signup" in request.form:
+            if user:
+                return "User already exists"
+
+            hashed = generate_password_hash(password)
             cur.execute("""
-            INSERT INTO users (username, role, latitude, longitude)
-            VALUES (?, ?, ?, ?)
-            """, (username, role, lat, lon))
+            INSERT INTO users (username, password, role, latitude, longitude)
+            VALUES (?, ?, ?, ?, ?)
+            """, (username, hashed, role, lat, lon))
             conn.commit()
             cur.execute("SELECT * FROM users WHERE username=?", (username,))
             user = cur.fetchone()
 
+        # LOGIN
+        else:
+            if not user or not check_password_hash(user["password"], password):
+                return "Invalid credentials"
+
         session["user_id"] = user["id"]
         session["role"] = user["role"]
 
-        return redirect("/seeker" if role == "Seeker" else "/volunteer")
+        return redirect("/seeker" if user["role"] == "Seeker" else "/volunteer")
 
     return render_template("login.html")
 
@@ -163,6 +186,7 @@ def seeker():
         conn.commit()
         req_id = cur.lastrowid
         heapq.heappush(priority_queue, (PRIORITY_MAP[priority], time.time(), req_id))
+
         return redirect("/seeker")
 
     return render_template("seeker_request.html")
@@ -172,26 +196,23 @@ def seeker():
 def volunteer():
     conn = get_db()
     cur = conn.cursor()
-
     cur.execute("""
     SELECT r.*, u.username AS seeker_name
     FROM requests r
     JOIN users u ON r.seeker_id = u.id
     WHERE r.status='Pending'
     ORDER BY CASE r.priority
-        WHEN 'Emergency' THEN 1
-        ELSE 2
-    END
+        WHEN 'Emergency' THEN 1 ELSE 2 END
     """)
-    requests_data = cur.fetchall()
-
-    return render_template("volunteer_dashboard.html", requests=requests_data)
+    data = cur.fetchall()
+    return render_template("volunteer_dashboard.html", requests=data)
 
 @app.route("/accept/<int:req_id>")
 def accept(req_id):
     cur = get_db().cursor()
     cur.execute("""
-    UPDATE requests SET status='Accepted', assigned_volunteer=?
+    UPDATE requests
+    SET status='Accepted', assigned_volunteer=?
     WHERE id=?
     """, (session["user_id"], req_id))
     cur.connection.commit()
