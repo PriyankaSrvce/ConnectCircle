@@ -1,22 +1,18 @@
-from flask import Flask, render_template, request, redirect, url_for, session
-import sqlite3
-import os
+from flask import Flask, render_template, request, redirect, session
+import sqlite3, os, heapq, time, math
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.secret_key = "connectcircle_secret"
+app.secret_key = "connectcircle-secret"
 
-# ---------- CONFIG ----------
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads")
-
-if not os.path.isdir(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-
+DB = "database.db"
+UPLOAD_FOLDER = "static/uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# ---------- DATABASE ----------
+# ================= DATABASE =================
 def get_db():
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(DB)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -27,138 +23,191 @@ def init_db():
     cur.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        role TEXT
+        username TEXT UNIQUE,
+        role TEXT,
+        latitude REAL,
+        longitude REAL
     )
     """)
 
     cur.execute("""
     CREATE TABLE IF NOT EXISTS requests (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        seeker_name TEXT,
+        seeker_id INTEGER,
         category TEXT,
         description TEXT,
+        priority TEXT,
         location TEXT,
         image TEXT,
         status TEXT,
-        volunteer_name TEXT
+        assigned_volunteer INTEGER
     )
     """)
-
     conn.commit()
     conn.close()
 
 init_db()
 
-# ---------- LOGIN ----------
+# ================= DATA STRUCTURES =================
+priority_queue = []
+PRIORITY_MAP = {"Emergency": 1, "Normal": 2}
+
+URGENT_KEYWORDS = [
+    "urgent", "pain", "bleeding", "fell",
+    "help fast", "emergency"
+]
+
+# ================= GRAPH / DISTANCE =================
+def distance(lat1, lon1, lat2, lon2):
+    return math.sqrt((lat1 - lat2)**2 + (lon1 - lon2)**2)
+
+def nearby_volunteer_exists(lat, lon):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM users WHERE role='Volunteer'")
+    volunteers = cur.fetchall()
+
+    for v in volunteers:
+        if v["latitude"] and v["longitude"]:
+            if distance(lat, lon, v["latitude"], v["longitude"]) <= 5:
+                return True
+    return False
+
+# ================= EMERGENCY CLASSIFIER =================
+def classify_priority(category, description, lat, lon):
+    if category in ["Medical", "Safety", "Mobility"]:
+        return "Emergency"
+
+    count = sum(1 for k in URGENT_KEYWORDS if k in description.lower())
+    if count >= 2:
+        return "Emergency"
+
+    if not nearby_volunteer_exists(lat, lon):
+        return "Emergency"
+
+    return "Normal"
+
+# ================= LOGIN =================
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        name = request.form["name"]
+        username = request.form["username"]
         role = request.form["role"]
+        lat = float(request.form["lat"])
+        lon = float(request.form["lon"])
 
         conn = get_db()
         cur = conn.cursor()
-        cur.execute("INSERT INTO users (name, role) VALUES (?, ?)", (name, role))
-        conn.commit()
-        conn.close()
 
-        session["name"] = name
-        session["role"] = role
+        cur.execute("SELECT * FROM users WHERE username=?", (username,))
+        user = cur.fetchone()
 
-        if role == "seeker":
-            return redirect(url_for("seeker_home"))
-        else:
-            return redirect(url_for("volunteer_dashboard"))
+        if not user:
+            cur.execute("""
+            INSERT INTO users (username, role, latitude, longitude)
+            VALUES (?, ?, ?, ?)
+            """, (username, role, lat, lon))
+            conn.commit()
+            cur.execute("SELECT * FROM users WHERE username=?", (username,))
+            user = cur.fetchone()
+
+        session["user_id"] = user["id"]
+        session["role"] = user["role"]
+
+        return redirect("/seeker" if role == "Seeker" else "/volunteer")
 
     return render_template("login.html")
 
-# ---------- SEEKER ----------
-@app.route("/seeker")
-def seeker_home():
-    return render_template("seeker_home.html")
+# ================= SEEKER =================
+@app.route("/seeker", methods=["GET", "POST"])
+def seeker():
+    if "user_id" not in session:
+        return redirect("/")
 
-@app.route("/request-help", methods=["GET", "POST"])
-def request_help():
+    seeker_id = session["user_id"]
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM requests WHERE seeker_id=?", (seeker_id,))
+    existing = cur.fetchone()
+    if existing:
+        return render_template("seeker_status.html", req=existing)
+
     if request.method == "POST":
         category = request.form["category"]
         description = request.form["description"]
         location = request.form["location"]
 
-        image_file = request.files.get("image")
-        image_name = None
+        image_path = None
+        if "image" in request.files:
+            img = request.files["image"]
+            if img.filename:
+                fname = secure_filename(img.filename)
+                img.save(os.path.join(app.config["UPLOAD_FOLDER"], fname))
+                image_path = fname
 
-        if image_file and image_file.filename:
-            image_name = image_file.filename
-            image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], image_name))
+        cur.execute("SELECT latitude, longitude FROM users WHERE id=?", (seeker_id,))
+        seeker = cur.fetchone()
 
-        conn = get_db()
-        cur = conn.cursor()
+        priority = classify_priority(
+            category, description,
+            seeker["latitude"], seeker["longitude"]
+        )
+
         cur.execute("""
-            INSERT INTO requests
-            (seeker_name, category, description, location, image, status, volunteer_name)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (
-            session["name"],
-            category,
-            description,
-            location,
-            image_name,
-            "Pending",
-            None
-        ))
+        INSERT INTO requests
+        (seeker_id, category, description, priority, location, image, status)
+        VALUES (?, ?, ?, ?, ?, ?, 'Pending')
+        """, (seeker_id, category, description, priority, location, image_path))
+
         conn.commit()
-        conn.close()
+        req_id = cur.lastrowid
+        heapq.heappush(priority_queue, (PRIORITY_MAP[priority], time.time(), req_id))
+        return redirect("/seeker")
 
-        return redirect(url_for("request_status"))
+    return render_template("seeker_request.html")
 
-    return render_template("request_help.html")
-
-@app.route("/status")
-def request_status():
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT * FROM requests
-        WHERE seeker_name = ?
-        ORDER BY id DESC LIMIT 1
-    """, (session["name"],))
-    req = cur.fetchone()
-    conn.close()
-
-    return render_template("status.html", req=req)
-
-# ---------- VOLUNTEER ----------
+# ================= VOLUNTEER =================
 @app.route("/volunteer")
-def volunteer_dashboard():
+def volunteer():
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM requests WHERE status='Pending'")
-    requests = cur.fetchall()
-    conn.close()
 
-    return render_template("volunteer_dashboard.html", requests=requests)
+    cur.execute("""
+    SELECT r.*, u.username AS seeker_name
+    FROM requests r
+    JOIN users u ON r.seeker_id = u.id
+    WHERE r.status='Pending'
+    ORDER BY CASE r.priority
+        WHEN 'Emergency' THEN 1
+        ELSE 2
+    END
+    """)
+    requests_data = cur.fetchall()
+
+    return render_template("volunteer_dashboard.html", requests=requests_data)
 
 @app.route("/accept/<int:req_id>")
-def accept_request(req_id):
-    conn = get_db()
-    cur = conn.cursor()
+def accept(req_id):
+    cur = get_db().cursor()
     cur.execute("""
-        UPDATE requests
-        SET status='Assigned', volunteer_name=?
-        WHERE id=?
-    """, (session["name"], req_id))
-    conn.commit()
-    conn.close()
+    UPDATE requests SET status='Accepted', assigned_volunteer=?
+    WHERE id=?
+    """, (session["user_id"], req_id))
+    cur.connection.commit()
+    return redirect("/volunteer")
 
-    return redirect(url_for("volunteer_dashboard"))
+@app.route("/complete/<int:req_id>")
+def complete(req_id):
+    cur = get_db().cursor()
+    cur.execute("UPDATE requests SET status='Completed' WHERE id=?", (req_id,))
+    cur.connection.commit()
+    return redirect("/volunteer")
 
-# ---------- LOGOUT ----------
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("login"))
+    return redirect("/")
 
-# ---------- RUN ----------
 if __name__ == "__main__":
     app.run(debug=True)

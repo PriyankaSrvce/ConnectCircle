@@ -1,18 +1,36 @@
-{% extends "base.html" %}
-{% block content %}
-<form method="POST" class="bg-white p-6 rounded-xl shadow space-y-4">
-    <h2 class="text-xl font-bold">Login</h2>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ConnectCircle Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-    <input name="name" required placeholder="Your name"
-           class="w-full p-3 border rounded">
+<form method="POST" class="bg-white p-6 rounded-xl shadow w-80">
+  <h2 class="text-xl font-bold mb-4 text-center">ConnectCircle</h2>
 
-    <select name="role" class="w-full p-3 border rounded">
-        <option value="seeker">Need Help</option>
-        <option value="volunteer">Volunteer</option>
-    </select>
+  <input name="username" placeholder="Username"
+         class="w-full mb-3 p-2 border rounded" required>
 
-    <button class="w-full bg-green-500 text-white py-3 rounded-lg">
-        Continue
-    </button>
+  <select name="role" class="w-full mb-3 p-2 border rounded">
+    <option value="Seeker">Need Help</option>
+    <option value="Volunteer">Volunteer</option>
+  </select>
+
+  <input type="hidden" id="lat" name="lat">
+  <input type="hidden" id="lon" name="lon">
+
+  <button class="bg-green-500 w-full text-white py-2 rounded">
+    Continue
+  </button>
 </form>
-{% endblock %}
+
+<script>
+navigator.geolocation.getCurrentPosition(pos => {
+  document.getElementById("lat").value = pos.coords.latitude;
+  document.getElementById("lon").value = pos.coords.longitude;
+});
+</script>
+
+</body>
+</html>
