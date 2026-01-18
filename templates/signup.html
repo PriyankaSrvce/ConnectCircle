@@ -6,21 +6,29 @@
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
 <form method="POST" class="bg-white p-6 rounded-xl shadow w-80">
-  <h2 class="text-xl font-bold mb-4 text-center">Login</h2>
+  <h2 class="text-xl font-bold mb-4 text-center">Sign Up</h2>
 
   <input name="username" placeholder="Username"
+         class="w-full mb-3 p-2 border rounded" required>
+
+  <input name="email" placeholder="Email"
          class="w-full mb-3 p-2 border rounded" required>
 
   <input type="password" name="password" placeholder="Password"
          class="w-full mb-3 p-2 border rounded" required>
 
-  <button class="bg-green-500 w-full text-white py-2 rounded">
-    Login
+  <select name="role" class="w-full mb-3 p-2 border rounded">
+    <option value="Seeker">Need Help</option>
+    <option value="Volunteer">Volunteer</option>
+  </select>
+
+  <button class="bg-blue-500 w-full text-white py-2 rounded">
+    Create Account
   </button>
 
   <p class="text-center text-sm mt-4">
-    New user?
-    <a href="/signup" class="text-blue-600 underline">Sign up</a>
+    Already have an account?
+    <a href="/" class="text-blue-600 underline">Login</a>
   </p>
 </form>
 
