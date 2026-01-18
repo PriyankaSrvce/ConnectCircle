@@ -1,16 +1,32 @@
-<link rel="stylesheet" href="/static/styles.css">
+{% extends "base.html" %}
+{% block content %}
 
-<div class="header">ConnectCircle</div>
+<div class="bg-white rounded-xl shadow-lg p-8 max-w-md mx-auto">
+    <h2 class="text-2xl font-bold mb-6 text-center">
+        Welcome to ConnectCircle
+    </h2>
 
-<div class="container">
-  <div class="card">
-    <form method="POST">
-      <input name="name" placeholder="Your Name" required><br><br>
-      <select name="role">
-        <option>Seeker</option>
-        <option>Volunteer</option>
-      </select><br><br>
-      <button class="btn">Continue</button>
+    <form method="POST" class="space-y-5">
+        <div>
+            <label class="block text-sm font-medium">Your Name</label>
+            <input name="name" required
+                   class="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium">I am a</label>
+            <select name="role"
+                    class="w-full mt-1 p-3 border rounded-lg">
+                <option value="seeker">Need Help</option>
+                <option value="volunteer">Volunteer</option>
+            </select>
+        </div>
+
+        <button
+            class="w-full bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600">
+            Continue
+        </button>
     </form>
-  </div>
 </div>
+
+{% endblock %}
