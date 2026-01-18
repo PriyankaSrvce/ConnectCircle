@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Available Requests</h2>
+
+{% for r in requests %}
+<div class="bg-white p-4 rounded-xl shadow mb-4">
+    <p><b>Seeker:</b> {{ r.seeker_name }}</p>
+    <p><b>Category:</b> {{ r.category }}</p>
+    <p><b>Location:</b> {{ r.location }}</p>
+    <p>{{ r.description }}</p>
+
+    <a href="/accept/{{ r.id }}"
+       class="inline-block mt-2 bg-green-500 text-white px-4 py-2 rounded">
+        Accept Request
+    </a>
+</div>
+{% else %}
+<p>No pending requests</p>
+{% endfor %}
+{% endblock %}

@@ -1,22 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-
-<div class="bg-white p-8 rounded-xl shadow max-w-xl mx-auto">
+<div class="bg-white p-6 rounded-xl shadow">
     <h2 class="text-xl font-bold mb-4">Request Status</h2>
 
-    {% if req %}
-        <p><strong>Category:</strong> {{ req["category"] }}</p>
-        <p><strong>Status:</strong>
-            <span class="text-yellow-600">{{ req["status"] }}</span>
-        </p>
+    <p><b>Category:</b> {{ req.category }}</p>
+    <p><b>Location:</b> {{ req.location }}</p>
+    <p><b>Status:</b> {{ req.status }}</p>
 
-        {% if req["image"] %}
-            <img src="/static/uploads/{{ req['image'] }}"
-                 class="mt-4 rounded-lg">
-        {% endif %}
+    {% if req.volunteer_name %}
+        <p><b>Volunteer:</b> {{ req.volunteer_name }}</p>
     {% else %}
-        <p>No request found.</p>
+        <p class="text-orange-500">Waiting for volunteer...</p>
     {% endif %}
 </div>
-
 {% endblock %}

@@ -1,39 +1,29 @@
 {% extends "base.html" %}
 {% block content %}
+<form method="POST" enctype="multipart/form-data"
+      class="bg-white p-6 rounded-xl shadow space-y-4">
 
-<div class="bg-white p-8 rounded-xl shadow max-w-xl mx-auto">
-    <h2 class="text-xl font-bold mb-4">Request Help</h2>
+    <h2 class="text-xl font-bold">Request Help</h2>
 
-    <form method="POST" enctype="multipart/form-data" class="space-y-4">
-        <div>
-            <label class="block text-sm font-medium">Category</label>
-            <select name="category" class="w-full p-3 border rounded-lg">
-                <option>Medical</option>
-                <option>Daily Needs</option>
-                <option>Emergency</option>
-                <option>Other</option>
-            </select>
-        </div>
+    <select name="category" class="w-full p-3 border rounded">
+        <option>Medical</option>
+        <option>Grocery</option>
+        <option>Mobility</option>
+        <option>Other</option>
+    </select>
 
-        <div>
-            <label class="block text-sm font-medium">Describe your problem</label>
-            <textarea name="description" required
-                class="w-full p-3 border rounded-lg"
-                rows="4"></textarea>
-        </div>
+    <input name="location" required
+           placeholder="Your location"
+           class="w-full p-3 border rounded">
 
-        <div>
-            <label class="block text-sm font-medium">
-                Upload image (prescription / issue)
-            </label>
-            <input type="file" name="image"
-                   class="w-full p-2 border rounded-lg">
-        </div>
+    <textarea name="description" required
+              placeholder="Describe your problem"
+              class="w-full p-3 border rounded"></textarea>
 
-        <button class="w-full bg-green-500 text-white py-3 rounded-lg font-semibold">
-            Submit Request
-        </button>
-    </form>
-</div>
+    <input type="file" name="image">
 
+    <button class="w-full bg-green-500 text-white py-3 rounded-lg">
+        Submit Request
+    </button>
+</form>
 {% endblock %}

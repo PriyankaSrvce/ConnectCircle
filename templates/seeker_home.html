@@ -1,28 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-
-<h2 class="text-2xl font-bold mb-6">What do you need help with?</h2>
-
-<div class="grid grid-cols-2 gap-6">
-    <a href="/request-help" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
-        <h3 class="font-semibold text-lg">Medical Help</h3>
-        <p class="text-sm text-gray-500">Medicine, doctor visit</p>
-    </a>
-
-    <a href="/request-help" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
-        <h3 class="font-semibold text-lg">Daily Needs</h3>
-        <p class="text-sm text-gray-500">Groceries, errands</p>
-    </a>
-
-    <a href="/request-help" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
-        <h3 class="font-semibold text-lg">Emergency</h3>
-        <p class="text-sm text-gray-500">Immediate assistance</p>
-    </a>
-
-    <a href="/request-help" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
-        <h3 class="font-semibold text-lg">Other</h3>
-        <p class="text-sm text-gray-500">Any other help</p>
+<div class="bg-white p-6 rounded-xl shadow">
+    <h2 class="text-xl font-bold mb-4">Need Help?</h2>
+    <a href="/request-help"
+       class="block bg-green-500 text-white text-center py-3 rounded-lg">
+        Create Help Request
     </a>
 </div>
-
 {% endblock %}

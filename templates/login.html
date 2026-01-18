@@ -1,32 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
+<form method="POST" class="bg-white p-6 rounded-xl shadow space-y-4">
+    <h2 class="text-xl font-bold">Login</h2>
 
-<div class="bg-white rounded-xl shadow-lg p-8 max-w-md mx-auto">
-    <h2 class="text-2xl font-bold mb-6 text-center">
-        Welcome to ConnectCircle
-    </h2>
+    <input name="name" required placeholder="Your name"
+           class="w-full p-3 border rounded">
 
-    <form method="POST" class="space-y-5">
-        <div>
-            <label class="block text-sm font-medium">Your Name</label>
-            <input name="name" required
-                   class="w-full mt-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-        </div>
+    <select name="role" class="w-full p-3 border rounded">
+        <option value="seeker">Need Help</option>
+        <option value="volunteer">Volunteer</option>
+    </select>
 
-        <div>
-            <label class="block text-sm font-medium">I am a</label>
-            <select name="role"
-                    class="w-full mt-1 p-3 border rounded-lg">
-                <option value="seeker">Need Help</option>
-                <option value="volunteer">Volunteer</option>
-            </select>
-        </div>
-
-        <button
-            class="w-full bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600">
-            Continue
-        </button>
-    </form>
-</div>
-
+    <button class="w-full bg-green-500 text-white py-3 rounded-lg">
+        Continue
+    </button>
+</form>
 {% endblock %}
