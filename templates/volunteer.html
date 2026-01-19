@@ -1,79 +1,74 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Volunteer Dashboard</title>
+  <title>ConnectCircle | Volunteer</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50">
+
+<body class="bg-gray-50 text-lg">
 
 <nav class="bg-white shadow p-4 flex justify-between">
-  <h1 class="font-bold text-indigo-600">ConnectCircle (Volunteer)</h1>
-  <a href="/logout" class="text-red-500">Logout</a>
+  <h1 class="font-bold text-2xl text-indigo-600">ConnectCircle</h1>
+
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold">
+      {{ user[0]|upper }}
+    </div>
+    <span class="font-medium">{{ user }}</span>
+    <a href="/logout" class="text-red-500 ml-2">Logout</a>
+  </div>
 </nav>
 
 <div class="max-w-6xl mx-auto p-6 grid md:grid-cols-2 gap-6">
 
 <!-- AVAILABLE REQUESTS -->
-<div class="bg-white p-6 rounded-xl shadow">
-  <h2 class="font-bold mb-3">Available Requests</h2>
+<div class="bg-white p-6 rounded shadow">
+  <h2 class="font-bold text-xl mb-4">Available Requests</h2>
 
   {% for r in pending %}
   <form method="POST" class="border p-3 mb-3 rounded">
-    <b>{{ r[2] }}</b>
+    <b>{{ r.category }}</b> ({{ r.urgency }})
+    <p>{{ r.description }}</p>
 
-    {% if r[5] == 1 %}
-      <span class="text-red-600 text-xs ml-2">EMERGENCY</span>
-      <p class="text-xs text-red-500 mt-1">Reason: {{ r[13] }}</p>
-    {% endif %}
+    <p class="text-sm">
+      {{ r.seeker }} | {{ r.seeker_phone }} | {{ r.seeker_location }}
+    </p>
 
-    <p class="text-sm">{{ r[3] }}</p>
-
-    <!-- REQUIRED HIDDEN FIELDS -->
-    <input type="hidden" name="action" value="accept">
-    <input type="hidden" name="id" value="{{ r[0] }}">
-
-    <input name="phone" placeholder="Phone" required
-      class="w-full border mt-2 px-2 py-1 rounded">
-
-    <input name="eta" placeholder="ETA (min)" required
-      class="w-full border mt-2 px-2 py-1 rounded">
+    <input type="hidden" name="id" value="{{ r.id }}">
+    <input name="phone" placeholder="Your Phone" class="w-full border mt-2 p-1 rounded">
+    <input name="location" placeholder="Your Location" class="w-full border mt-2 p-1 rounded">
+    <input name="eta" placeholder="ETA (min)" class="w-full border mt-2 p-1 rounded">
 
     <button class="mt-2 w-full bg-indigo-600 text-white py-1 rounded">
-      Accept
+      Accept Request
     </button>
   </form>
-  {% else %}
-  <p class="text-sm text-gray-500">No available requests</p>
   {% endfor %}
 </div>
 
 <!-- MY REQUESTS -->
-<div class="bg-white p-6 rounded-xl shadow">
-  <h2 class="font-bold mb-3">My Requests</h2>
+<div class="bg-white p-6 rounded shadow">
+  <h2 class="font-bold text-xl mb-4">My Requests</h2>
 
   {% for r in mine %}
-  <div class="border p-3 mb-2 rounded bg-blue-50">
-    <b>{{ r[2] }}</b>
-    <p class="text-sm">{{ r[3] }}</p>
-    <span class="text-xs font-semibold">{{ r[6] }}</span>
+  <div class="border p-3 mb-3 rounded bg-blue-50">
+    <b>{{ r.category }}</b>
+    <p>{{ r.description }}</p>
 
-    {% if r[6] == "Accepted" %}
-    <form method="POST" class="mt-2">
-      <input type="hidden" name="action" value="complete">
-      <input type="hidden" name="id" value="{{ r[0] }}">
-      <button class="bg-green-600 text-white px-3 py-1 rounded text-sm">
-        Mark as Completed
-      </button>
-    </form>
+    {% if r.image %}
+      <img src="/{{ r.image }}" class="w-40 mt-2 rounded">
     {% endif %}
 
-    {% if r[6] == "Completed" and r[12] == 1 %}
-      <p class="text-xs mt-1">⭐ Rating: {{ r[10] }}/5</p>
-      <p class="text-xs text-gray-600">{{ r[11] }}</p>
+    {% if r.status == "Accepted" %}
+      <a href="/complete/{{ r.id }}" class="text-indigo-600 text-sm">
+        Mark as Complete
+      </a>
+    {% elif r.status == "Completed" %}
+      <span class="text-gray-600 text-sm">Waiting for rating</span>
+    {% elif r.status == "Rated" %}
+      <span class="text-green-600 text-sm">Rated ⭐ {{ r.rating }}</span>
     {% endif %}
   </div>
-  {% else %}
-  <p class="text-sm text-gray-500">No accepted requests yet</p>
   {% endfor %}
 </div>
 

@@ -3,35 +3,16 @@
 <head>
   <title>ConnectCircle | Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+<body class="bg-gray-100 flex justify-center items-center h-screen text-lg">
 
-<form method="POST" class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-  <div class="text-center mb-6">
-    <div class="mx-auto w-14 h-14 bg-indigo-600 rounded-full flex items-center justify-center">
-      <i data-lucide="heart" class="text-white"></i>
-    </div>
-    <h1 class="text-2xl font-bold mt-2">ConnectCircle</h1>
-    <p class="text-gray-500 text-sm">Community Help Platform</p>
-  </div>
-
-  <input name="username" placeholder="Username"
-    class="w-full mb-3 px-4 py-2 border rounded-lg">
-
-  <input type="password" name="password" placeholder="Password"
-    class="w-full mb-4 px-4 py-2 border rounded-lg">
-
-  <button class="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold">
-    Login
-  </button>
-
-  <p class="text-center mt-4 text-sm">
-    No account?
-    <a href="/signup" class="text-indigo-600 font-medium">Sign up</a>
-  </p>
+<form method="POST" class="bg-white p-6 rounded shadow w-80">
+  <h2 class="text-2xl font-bold mb-4 text-center text-indigo-600">ConnectCircle</h2>
+  <input name="username" placeholder="Username" class="w-full border p-2 mb-2 rounded">
+  <input type="password" name="password" placeholder="Password" class="w-full border p-2 mb-4 rounded">
+  <button class="w-full bg-indigo-600 text-white p-2 rounded">Login</button>
+  <a href="/signup" class="block text-center text-sm mt-3 text-indigo-600">Signup</a>
 </form>
 
-<script>lucide.createIcons()</script>
 </body>
 </html>
