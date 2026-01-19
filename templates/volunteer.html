@@ -1,58 +1,72 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Volunteer Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <title>Volunteer Dashboard</title>
 </head>
-<body class="bg-gray-50">
+<body>
+<h2>Welcome Volunteer</h2>
+<a href="/logout">Logout</a>
 
-<nav class="bg-white shadow p-4 flex justify-between">
-  <h1 class="font-bold text-indigo-600">ConnectCircle (Volunteer)</h1>
-  <a href="/logout" class="text-red-500">Logout</a>
-</nav>
+<hr>
 
-<div class="max-w-6xl mx-auto p-6 grid md:grid-cols-2 gap-6">
+<h3>Pending Requests</h3>
 
-<!-- AVAILABLE REQUESTS -->
-<div class="bg-white p-6 rounded-xl shadow">
-  <h2 class="font-bold mb-3">Available Requests</h2>
+{% for r in pending %}
+<div style="border:1px solid black; padding:10px; margin:10px;">
+    <b>Seeker:</b> {{ r[1] }} <br>
+    <b>Category:</b> {{ r[2] }} <br>
+    <b>Description:</b> {{ r[3] }} <br>
+    <b>Location:</b> {{ r[4] }} <br>
 
-  {% for r in pending %}
-  <form method="POST" class="border p-3 mb-3 rounded">
-    <b>{{ r[2] }}</b>
     {% if r[5] == 1 %}
-      <span class="text-red-600 text-xs ml-2">EMERGENCY</span>
+        <span style="color:red;"><b>EMERGENCY</b></span><br>
+        <small>Reason: {{ r[13] }}</small><br>
     {% endif %}
-    <p class="text-sm">{{ r[3] }}</p>
 
-    <input type="hidden" name="id" value="{{ r[0] }}">
+    <form method="POST">
+        <input type="hidden" name="action" value="accept">
+        <input type="hidden" name="id" value="{{ r[0] }}">
 
-    <input name="phone" placeholder="Phone"
-      class="w-full border mt-2 px-2 py-1 rounded">
+        Phone:
+        <input type="text" name="phone" required><br>
 
-    <input name="eta" placeholder="ETA (min)"
-      class="w-full border mt-2 px-2 py-1 rounded">
+        ETA:
+        <input type="text" name="eta" required><br>
 
-    <button class="mt-2 w-full bg-indigo-600 text-white py-1 rounded">
-      Accept
-    </button>
-  </form>
-  {% endfor %}
+        <button type="submit">Accept Request</button>
+    </form>
 </div>
+{% else %}
+<p>No pending requests.</p>
+{% endfor %}
 
-<!-- MY REQUESTS -->
-<div class="bg-white p-6 rounded-xl shadow">
-  <h2 class="font-bold mb-3">My Requests</h2>
+<hr>
 
-  {% for r in mine %}
-  <div class="border p-3 mb-2 rounded bg-blue-50">
-    <b>{{ r[2] }}</b>
-    <p class="text-sm">{{ r[3] }}</p>
-    <span class="text-xs">{{ r[6] }}</span>
-  </div>
-  {% endfor %}
+<h3>My Accepted / Completed Requests</h3>
+
+{% for r in mine %}
+<div style="border:1px solid green; padding:10px; margin:10px;">
+    <b>Seeker:</b> {{ r[1] }} <br>
+    <b>Status:</b> {{ r[6] }} <br>
+    <b>Phone:</b> {{ r[8] }} <br>
+    <b>ETA:</b> {{ r[9] }} <br>
+
+    {% if r[6] == "Accepted" %}
+    <form method="POST">
+        <input type="hidden" name="action" value="complete">
+        <input type="hidden" name="id" value="{{ r[0] }}">
+        <button type="submit">Mark as Completed</button>
+    </form>
+    {% endif %}
+
+    {% if r[6] == "Completed" and r[12] == 1 %}
+        <p><b>Rating:</b> {{ r[10] }}/5</p>
+        <p><b>Feedback:</b> {{ r[11] }}</p>
+    {% endif %}
 </div>
+{% else %}
+<p>No accepted requests yet.</p>
+{% endfor %}
 
-</div>
 </body>
 </html>
