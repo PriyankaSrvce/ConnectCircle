@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Seeker Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+<nav class="bg-white shadow p-4 flex justify-between">
+  <h1 class="font-bold text-indigo-600">ConnectCircle (Seeker)</h1>
+  <a href="/logout" class="text-red-500">Logout</a>
+</nav>
+
+<div class="max-w-6xl mx-auto p-6 grid md:grid-cols-2 gap-6">
+
+<!-- CREATE REQUEST -->
+<form method="POST" class="bg-white p-6 rounded-xl shadow">
+  <h2 class="font-bold mb-3">Create Request</h2>
+
+  <select name="category" class="w-full mb-3 border px-3 py-2 rounded">
+    <option>Medical</option>
+    <option>Safety</option>
+    <option>Mobility</option>
+    <option>Food</option>
+    <option>Education</option>
+    <option>Other</option>
+  </select>
+
+  <textarea name="description" placeholder="Describe your need"
+    class="w-full mb-3 border px-3 py-2 rounded"></textarea>
+
+  <input name="location" placeholder="Location"
+    class="w-full mb-4 border px-3 py-2 rounded">
+
+  <button class="w-full bg-indigo-600 text-white py-2 rounded">
+    Submit
+  </button>
+</form>
+
+<!-- MY REQUESTS -->
+<div class="bg-white p-6 rounded-xl shadow">
+  <h2 class="font-bold mb-3">My Requests</h2>
+
+  {% for r in requests %}
+  <div class="border p-3 mb-2 rounded">
+    <div class="flex justify-between">
+      <b>{{ r[2] }}</b>
+      <span class="text-sm">{{ r[6] }}</span>
+    </div>
+    <p class="text-sm text-gray-600">{{ r[3] }}</p>
+    <p class="text-xs text-gray-500">{{ r[4] }}</p>
+  </div>
+  {% endfor %}
+</div>
+
+</div>
+</body>
+</html>

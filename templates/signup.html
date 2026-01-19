@@ -1,14 +1,35 @@
-<link rel="stylesheet" href="/static/style.css">
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ConnectCircle | Signup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
 
-<div class="card">
-  <h2>Signup</h2>
-  <form method="post">
-    <input name="username" placeholder="Username">
-    <input name="password" type="password" placeholder="Password">
-    <select name="role">
-      <option>Seeker</option>
-      <option>Volunteer</option>
-    </select>
-    <button>Signup</button>
-  </form>
-</div>
+<form method="POST" class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+  <h2 class="text-2xl font-bold mb-4">Create Account</h2>
+
+  <input name="username" placeholder="Username"
+    class="w-full mb-3 px-4 py-2 border rounded-lg">
+
+  <input type="password" name="password" placeholder="Password"
+    class="w-full mb-3 px-4 py-2 border rounded-lg">
+
+  <select name="role" class="w-full mb-4 px-4 py-2 border rounded-lg">
+    <option value="">Select Role</option>
+    <option>Seeker</option>
+    <option>Volunteer</option>
+  </select>
+
+  <button class="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold">
+    Sign Up
+  </button>
+
+  <p class="text-center mt-4 text-sm">
+    Already registered?
+    <a href="/" class="text-indigo-600 font-medium">Login</a>
+  </p>
+</form>
+
+</body>
+</html>
