@@ -1,37 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 p-6">
+<h2 class="text-2xl font-bold mb-4">Volunteer Queue</h2>
 
-<h1 class="text-2xl font-bold mb-4">Volunteer Dashboard</h1>
-
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 {% for r in requests %}
-  <div class="bg-white p-4 rounded-xl shadow border-l-4
-    {% if r.priority == 'Emergency' %}border-red-500{% else %}border-yellow-400{% endif %}">
-
-    <h2 class="font-semibold">{{ r.category }}</h2>
-    <p class="text-sm">{{ r.description }}</p>
-    <p class="mt-2">📍 {{ r.location }}</p>
-
-    {% if r.image %}
-      <a href="/static/uploads/{{ r.image }}" target="_blank"
-         class="text-blue-600 underline text-sm">View Image</a>
-    {% endif %}
-
-    <div class="mt-3 flex gap-2">
-      <a href="/accept/{{ r.id }}" class="bg-green-500 text-white px-3 py-1 rounded">
-        Accept
-      </a>
-      <a href="/complete/{{ r.id }}" class="bg-gray-700 text-white px-3 py-1 rounded">
-        Complete
-      </a>
-    </div>
-  </div>
-{% endfor %}
+<div class="bg-white p-4 rounded shadow mb-3">
+<p><b>{{ r.category }}</b> | Priority {{ r.priority }}</p>
+<p>{{ r.description }}</p>
+<a href="/accept/{{ r.id }}" class="bg-blue-500 text-white px-3 py-1 rounded mr-2">Accept</a>
+<a href="/complete/{{ r.id }}" class="bg-green-500 text-white px-3 py-1 rounded">Complete</a>
 </div>
-
+{% endfor %}
 </body>
 </html>
