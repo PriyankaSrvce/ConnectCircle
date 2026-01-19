@@ -1,18 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-<script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 p-6">
-<h2 class="text-2xl font-bold mb-4">Volunteer Queue</h2>
+<h2>Pending Requests</h2>
 
 {% for r in requests %}
-<div class="bg-white p-4 rounded shadow mb-3">
-<p><b>{{ r.category }}</b> | Priority {{ r.priority }}</p>
-<p>{{ r.description }}</p>
-<a href="/accept/{{ r.id }}" class="bg-blue-500 text-white px-3 py-1 rounded mr-2">Accept</a>
-<a href="/complete/{{ r.id }}" class="bg-green-500 text-white px-3 py-1 rounded">Complete</a>
-</div>
+<form method="post">
+<p>
+ID {{r[0]}} | {{r[2]}} | {{r[4]}} <br>
+Location: {{r[4]}}
+</p>
+<input type="hidden" name="rid" value="{{r[0]}}">
+Phone <input name="phone">
+ETA <input name="eta">
+<button>Accept</button>
+</form>
+<hr>
 {% endfor %}
-</body>
-</html>
+
+<a href="/logout">Logout</a>
