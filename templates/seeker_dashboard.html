@@ -1,18 +1,24 @@
-<h2>New Request</h2>
-<form method="post">
-Category <input name="category"><br>
-Description <input name="description"><br>
-Location <input name="location"><br>
-<button>Submit</button>
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <h2 class="text-2xl font-bold mb-4">Create Request</h2>
 
-<h2>My Requests</h2>
-{% for r in requests %}
-<p>
-ID {{r[0]}} | {{r[6]}} <br>
-Volunteer: {{r[7] or "Not assigned"}} <br>
-Phone: {{r[8] or "-"}} | ETA: {{r[9] or "-"}}
-</p>
-{% endfor %}
+  <form method="POST" class="bg-white p-4 rounded shadow mb-6">
+    <input name="category" placeholder="Category" class="w-full p-2 border rounded mb-2"/>
+    <textarea name="description" placeholder="Description" class="w-full p-2 border rounded mb-2"></textarea>
+    <input name="location" placeholder="Location" class="w-full p-2 border rounded mb-2"/>
+    <button class="bg-indigo-600 text-white px-4 py-2 rounded">Submit</button>
+  </form>
 
-<a href="/logout">Logout</a>
+  <h2 class="text-xl font-bold mb-2">My Requests</h2>
+  {% for r in requests %}
+    <div class="bg-white p-4 rounded shadow mb-2">
+      <b>{{ r.category }}</b> — {{ r.status }}
+      <p class="text-sm">{{ r.description }}</p>
+    </div>
+  {% endfor %}
+</body>
+</html>

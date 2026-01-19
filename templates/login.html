@@ -1,7 +1,15 @@
-<h2>Login</h2>
-<form method="post">
-  Username <input name="username"><br>
-  Password <input type="password" name="password"><br>
-  <button>Login</button>
-</form>
-<a href="/signup">Sign up</a>
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 to-blue-200 h-screen flex items-center justify-center">
+  <form method="POST" class="bg-white p-8 rounded-xl shadow-xl w-96">
+    <h1 class="text-2xl font-bold mb-6 text-center">ConnectCircle</h1>
+    <input name="username" placeholder="Username" class="w-full p-2 border rounded mb-4"/>
+    <input type="password" name="password" placeholder="Password" class="w-full p-2 border rounded mb-4"/>
+    <button class="w-full bg-indigo-600 text-white py-2 rounded">Login</button>
+    <a href="/signup" class="block text-center mt-4 text-indigo-600">Sign up</a>
+  </form>
+</body>
+</html>
